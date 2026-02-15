@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דשבורד דיווחי פחים - רמת גן</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 32px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .filters {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-group label {
+            margin-bottom: 5px;
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .filter-group input,
+        .filter-group select {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        thead {
+            background: #f7fafc;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: right;
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            font-size: 14px;
+        }
+        
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+        
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+            font-size: 16px;
+        }
+        
+        .delete-btn {
+            background: #fc8181;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .delete-btn:hover {
+            background: #f56565;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .filters {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-number {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 דשבורד דיווחי פחים</h1>
+        <div class="subtitle">עיריית רמת גן - ניהול ומעקב</div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalReports">0</div>
+                <div class="stat-label">סך הכל דיווחים</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalBins">0</div>
+                <div class="stat-label">סך הכל פחים</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayReports">0</div>
+                <div class="stat-label">דיווחים היום</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="uniqueStreets">0</div>
+                <div class="stat-label">רחובות שנספרו</div>
+            </div>
+        </div>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <label>חיפוש לפי רחוב</label>
+                <input type="text" id="filterStreet" placeholder="הקלד שם רחוב...">
+            </div>
+            <div class="filter-group">
+                <label>מתאריך</label>
+                <input type="date" id="filterFromDate">
+            </div>
+            <div class="filter-group">
+                <label>עד תאריך</label>
+                <input type="date" id="filterToDate">
+            </div>
+            <div class="filter-group">
+                <label>מספר בית</label>
+                <input type="text" id="filterHouseNumber" placeholder="מספר בית...">
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="btn btn-primary" onclick="loadReports()">🔄 רענן נתונים</button>
+            <button class="btn btn-success" onclick="exportToExcel()">📥 ייצא לאקסל</button>
+            <button class="btn btn-primary" onclick="clearFilters()">🗑️ נקה סינונים</button>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>טוען נתונים...</p>
+        </div>
+        
+        <div class="table-container" id="tableContainer" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>תאריך</th>
+                        <th>שעה</th>
+                        <th>רחוב</th>
+                        <th>מספר בית</th>
+                        <th>מספר פחים</th>
+                        <th>הערות</th>
+                        <th>פעולות</th>
+                    </tr>
+                </thead>
+                <tbody id="reportsTableBody">
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="no-data" id="noData" style="display: none;">
+            אין דיווחים להצגה
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getDatabase, ref, get, remove, query, orderByChild } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB1Bc2XO_QIvpo_2Ki7iGUXfhZQdkWHxr4",
+            authDomain: "resource-reporting-8c7aa.firebaseapp.com",
+            databaseURL: "https://resource-reporting-8c7aa-default-rtdb.firebaseio.com",
+            projectId: "resource-reporting-8c7aa",
+            storageBucket: "resource-reporting-8c7aa.firebasestorage.app",
+            messagingSenderId: "597101026013",
+            appId: "1:597101026013:web:354809104e0948cd6fd934",
+            measurementId: "G-9ZM04YXJ9X"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        let allReports = [];
+        let filteredReports = [];
+
+        // טעינת דיווחים
+        window.loadReports = async function() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('tableContainer').style.display = 'none';
+            document.getElementById('noData').style.display = 'none';
+            
+            try {
+                const binCountingRef = ref(database, 'bin_counting');
+                const snapshot = await get(binCountingRef);
+                
+                if (snapshot.exists()) {
+                    allReports = [];
+                    snapshot.forEach((childSnapshot) => {
+                        const data = childSnapshot.val();
+                        allReports.push({
+                            id: childSnapshot.key,
+                            ...data
+                        });
+                    });
+                    
+                    // מיון לפי תאריך (החדשים ראשונים)
+                    allReports.sort((a, b) => b.timestamp - a.timestamp);
+                    
+                    updateStats();
+                    applyFilters();
+                } else {
+                    allReports = [];
+                    updateStats();
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('noData').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                alert('שגיאה בטעינת הנתונים: ' + error.message);
+                document.getElementById('loading').style.display = 'none';
+            }
+        };
+
+        // עדכון סטטיסטיקות
+        function updateStats() {
+            const totalReports = allReports.length;
+            const totalBins = allReports.reduce((sum, r) => sum + (r.binCount || 0), 0);
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayReports = allReports.filter(r => {
+                const reportDate = new Date(r.timestamp);
+                reportDate.setHours(0, 0, 0, 0);
+                return reportDate.getTime() === today.getTime();
+            }).length;
+            
+            const uniqueStreets = new Set(allReports.map(r => r.street)).size;
+            
+            document.getElementById('totalReports').textContent = totalReports;
+            document.getElementById('totalBins').textContent = totalBins;
+            document.getElementById('todayReports').textContent = todayReports;
+            document.getElementById('uniqueStreets').textContent = uniqueStreets;
+        }
+
+        // החלת סינונים
+        window.applyFilters = function() {
+            const streetFilter = document.getElementById('filterStreet').value.toLowerCase();
+            const fromDate = document.getElementById('filterFromDate').value;
+            const toDate = document.getElementById('filterToDate').value;
+            const houseNumberFilter = document.getElementById('filterHouseNumber').value.toLowerCase();
+            
+            filteredReports = allReports.filter(report => {
+                // סינון לפי רחוב
+                if (streetFilter && !report.street.toLowerCase().includes(streetFilter)) {
+                    return false;
+                }
+                
+                // סינון לפי מספר בית
+                if (houseNumberFilter && !report.houseNumber.toLowerCase().includes(houseNumberFilter)) {
+                    return false;
+                }
+                
+                // סינון לפי תאריך
+                if (fromDate || toDate) {
+                    const reportDate = new Date(report.timestamp);
+                    reportDate.setHours(0, 0, 0, 0);
+                    
+                    if (fromDate) {
+                        const from = new Date(fromDate);
+                        from.setHours(0, 0, 0, 0);
+                        if (reportDate < from) return false;
+                    }
+                    
+                    if (toDate) {
+                        const to = new Date(toDate);
+                        to.setHours(23, 59, 59, 999);
+                        if (reportDate > to) return false;
+                    }
+                }
+                
+                return true;
+            });
+            
+            displayReports();
+        };
+
+        // הצגת דיווחים בטבלה
+        function displayReports() {
+            const tbody = document.getElementById('reportsTableBody');
+            tbody.innerHTML = '';
+            
+            document.getElementById('loading').style.display = 'none';
+            
+            if (filteredReports.length === 0) {
+                document.getElementById('tableContainer').style.display = 'none';
+                document.getElementById('noData').style.display = 'block';
+                return;
+            }
+            
+            document.getElementById('tableContainer').style.display = 'block';
+            document.getElementById('noData').style.display = 'none';
+            
+            filteredReports.forEach(report => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${report.date || new Date(report.timestamp).toLocaleDateString('he-IL')}</td>
+                    <td>${report.time || new Date(report.timestamp).toLocaleTimeString('he-IL', {hour: '2-digit', minute: '2-digit'})}</td>
+                    <td>${report.street}</td>
+                    <td>${report.houseNumber}</td>
+                    <td><strong>${report.binCount}</strong></td>
+                    <td>${report.notes || '-'}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteReport('${report.id}')">מחק</button>
+                    </td>
+                `;
+            });
+        }
+
+        // מחיקת דיווח
+        window.deleteReport = async function(reportId) {
+            if (!confirm('האם אתה בטוח שברצונך למחוק דיווח זה?')) {
+                return;
+            }
+            
+            try {
+                const reportRef = ref(database, `bin_counting/${reportId}`);
+                await remove(reportRef);
+                alert('הדיווח נמחק בהצלחה');
+                loadReports();
+            } catch (error) {
+                console.error('Error deleting report:', error);
+                alert('שגיאה במחיקת הדיווח: ' + error.message);
+            }
+        };
+
+        // ניקוי סינונים
+        window.clearFilters = function() {
+            document.getElementById('filterStreet').value = '';
+            document.getElementById('filterFromDate').value = '';
+            document.getElementById('filterToDate').value = '';
+            document.getElementById('filterHouseNumber').value = '';
+            applyFilters();
+        };
+
+        // ייצוא לאקסל
+        window.exportToExcel = function() {
+            if (filteredReports.length === 0) {
+                alert('אין נתונים לייצוא');
+                return;
+            }
+            
+            let csv = '\uFEFF'; // UTF-8 BOM for Hebrew support
+            csv += 'תאריך,שעה,רחוב,מספר בית,מספר פחים,הערות\n';
+            
+            filteredReports.forEach(report => {
+                const date = report.date || new Date(report.timestamp).toLocaleDateString('he-IL');
+                const time = report.time || new Date(report.timestamp).toLocaleTimeString('he-IL', {hour: '2-digit', minute: '2-digit'});
+                const notes = (report.notes || '').replace(/,/g, ';');
+                
+                csv += `${date},${time},${report.street},${report.houseNumber},${report.binCount},"${notes}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            const now = new Date();
+            const filename = `דיווחי_פחים_${now.getDate()}_${now.getMonth() + 1}_${now.getFullYear()}.csv`;
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        // הוספת event listeners לסינונים
+        document.getElementById('filterStreet').addEventListener('input', applyFilters);
+        document.getElementById('filterFromDate').addEventListener('change', applyFilters);
+        document.getElementById('filterToDate').addEventListener('change', applyFilters);
+        document.getElementById('filterHouseNumber').addEventListener('input', applyFilters);
+
+        // טעינה אוטומטית בעת פתיחת הדף
+        window.addEventListener('DOMContentLoaded', loadReports);
+    </script>
+</body>
+</html>
