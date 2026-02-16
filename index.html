@@ -3,42 +3,357 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ספירת פחי מיחזור - רמת גן</title>
-    <meta http-equiv="refresh" content="0; url=dashboard.html">
+    <title>מערכת ספירת פחי מיחזור - עיריית רמת גן</title>
+    <meta http-equiv="refresh" content="5; url=dashboard.html">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Heebo', Arial, sans-serif;
+            background: linear-gradient(135deg, #0066b3 0%, #004d8a 50%, #003366 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0066b3;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #0066b3, #00aaff);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+        }
+
+        .municipality-name {
+            font-size: 18px;
+            color: #666;
+            font-weight: 500;
+            border-right: 2px solid #0066b3;
+            padding-right: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 60px 80px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icon-container {
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .main-icon {
+            font-size: 80px;
+            background: linear-gradient(135deg, #00a86b, #00c896);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #003366;
+            margin-bottom: 15px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #0066b3;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .description {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        .status-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #0066b3;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .status-text {
+            font-size: 18px;
+            color: #003366;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0066b3, #00aaff);
+            animation: loading 2s ease-in-out infinite;
+            width: 70%;
+        }
+
+        @keyframes loading {
+            0% {
+                width: 0%;
+            }
+            50% {
+                width: 70%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        .manual-link {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #0066b3, #00aaff);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,102,179,0.3);
+        }
+
+        .manual-link:hover {
+            background: linear-gradient(135deg, #004d8a, #0066b3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,102,179,0.4);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .footer-links {
+            margin-top: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        /* Info badges */
+        .info-badges {
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #00a86b, #00c896);
             color: white;
-            text-align: center;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .container {
-            padding: 40px;
-        }
-        h1 {
-            font-size: 32px;
-            margin-bottom: 20px;
-        }
-        p {
-            font-size: 18px;
-        }
-        a {
-            color: #fff;
-            text-decoration: underline;
-            font-weight: bold;
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .municipality-name {
+                border-right: none;
+                border-top: 2px solid #0066b3;
+                padding-right: 0;
+                padding-top: 10px;
+            }
+
+            .info-badges {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🗑️ ספירת פחי מיחזור</h1>
-        <p>מעביר אותך לאפליקציה...</p>
-        <p><a href="dashboard.html">אם לא הועברת אוטומטית, לחץ כאן</a></p>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-section">
+            <div class="logo">
+                <div class="logo-icon">🏛️</div>
+                <span>עיריית רמת גן</span>
+            </div>
+        </div>
+        <div class="municipality-name">
+            אגף שפ"ע
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="icon-container">
+                <div class="main-icon">♻️</div>
+            </div>
+
+            <h1>מערכת ספירת פחי מיחזור</h1>
+            <div class="subtitle">רמת גן - עיר ירוקה ובריאה</div>
+
+            <p class="description">
+                מערכת דיגיטלית לניהול וספירת פחי מיחזור ברחובות העיר.<br>
+                מערכת זו מאפשרת מעקב בזמן אמת ואיסוף נתונים גיאוגרפיים.
+            </p>
+
+            <div class="status-box">
+                <div class="status-text">⏳ טוען את המערכת...</div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <p style="color: #666; font-size: 14px;">
+                    המערכת תיטען אוטומטית תוך מספר שניות
+                </p>
+            </div>
+
+            <a href="dashboard.html" class="manual-link">
+                🚀 כניסה למערכת
+            </a>
+
+            <div class="info-badges">
+                <div class="badge">
+                    <span>📍</span>
+                    <span>GPS מובנה</span>
+                </div>
+                <div class="badge">
+                    <span>📊</span>
+                    <span>דוחות בזמן אמת</span>
+                </div>
+                <div class="badge">
+                    <span>☁️</span>
+                    <span>שמירה ענן</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2026 עיריית רמת גן | אגף שפ"ע</p>
+        <div class="footer-links">
+            <a href="https://www.ramat-gan.muni.il" target="_blank">אתר העירייה</a>
+            <a href="tel:03-6753333">03-6753333</a>
+            <a href="mailto:yael-d@ramat-gan.muni.il">יצירת קשר</a>
+        </div>
     </div>
 </body>
 </html>
